@@ -66,10 +66,7 @@ module.exports = angular
           'ecs.serverGroup.basicSettings',
           require('./location/basicSettings.html'),
         ),
-        container: overrideRegistry.getTemplate(
-          'ecs.serverGroup.container',
-          require('./container/container.html'),
-        ),
+        container: overrideRegistry.getTemplate('ecs.serverGroup.container', require('./container/container.html')),
         horizontalScaling: overrideRegistry.getTemplate(
           'ecs.serverGroup.horizontalScaling',
           require('./horizontalScaling/horizontalScaling.html'),
@@ -80,6 +77,10 @@ module.exports = angular
         advancedSettings: overrideRegistry.getTemplate(
           'ecs.serverGroup.advancedSettings',
           require('./advancedSettings/advancedSettings.html'),
+        ),
+        taskDefinition: overrideRegistry.getTemplate(
+          'ecs.taskDefinition',
+          require('./taskDefinition/taskDefinition.html'),
         ),
       };
 
