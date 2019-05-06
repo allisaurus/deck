@@ -8,6 +8,7 @@ import {
   SERVER_GROUP_WRITER,
   TaskMonitor,
   ModalWizard,
+  STAGE_ARTIFACT_SELECTOR_COMPONENT_REACT,
 } from '@spinnaker/core';
 
 import { ECS_SERVER_GROUP_CONFIGURATION_SERVICE } from '../serverGroupConfiguration.service';
@@ -25,6 +26,7 @@ module.exports = angular
     IAM_ROLE_READ_SERVICE,
     ECS_CLUSTER_READ_SERVICE,
     ECS_SECRET_READ_SERVICE,
+    STAGE_ARTIFACT_SELECTOR_COMPONENT_REACT,
   ])
   .controller('ecsCloneServerGroupCtrl', [
     '$scope',
@@ -66,10 +68,7 @@ module.exports = angular
           'ecs.serverGroup.basicSettings',
           require('./location/basicSettings.html'),
         ),
-        container: overrideRegistry.getTemplate(
-          'ecs.serverGroup.container',
-          require('./container/container.html'),
-        ),
+        container: overrideRegistry.getTemplate('ecs.serverGroup.container', require('./container/container.html')),
         horizontalScaling: overrideRegistry.getTemplate(
           'ecs.serverGroup.horizontalScaling',
           require('./horizontalScaling/horizontalScaling.html'),
@@ -80,6 +79,10 @@ module.exports = angular
         advancedSettings: overrideRegistry.getTemplate(
           'ecs.serverGroup.advancedSettings',
           require('./advancedSettings/advancedSettings.html'),
+        ),
+        taskDefinition: overrideRegistry.getTemplate(
+          'ecs.taskDefinition',
+          require('./taskDefinition/taskDefinition.html'),
         ),
       };
 
@@ -94,6 +97,9 @@ module.exports = angular
         loaded: false,
         requiresTemplateSelection: !!serverGroupCommand.viewState.requiresTemplateSelection,
       };
+
+      $scope.command.taskDefinitionFromArtifact = false; // new
+      $scope.command.selectedTaskDefArtifact = '';
 
       this.templateSelectionText = {
         copied: [
@@ -202,6 +208,7 @@ module.exports = angular
         return ModalWizard.allPagesVisited();
       };
 
+      // save/commit func
       this.submit = function() {
         if ($scope.command.viewState.mode === 'editPipeline' || $scope.command.viewState.mode === 'createPipeline') {
           return $uibModalInstance.close($scope.command);
