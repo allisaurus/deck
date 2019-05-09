@@ -95,6 +95,8 @@ module.exports = angular
         requiresTemplateSelection: !!serverGroupCommand.viewState.requiresTemplateSelection,
       };
 
+      $scope.command.taskDefinitionFromArtifact = false;
+
       this.templateSelectionText = {
         copied: [
           'account, region, subnet, cluster name (stack, details)',
@@ -202,6 +204,7 @@ module.exports = angular
         return ModalWizard.allPagesVisited();
       };
 
+      // save/commit func
       this.submit = function() {
         if ($scope.command.viewState.mode === 'editPipeline' || $scope.command.viewState.mode === 'createPipeline') {
           return $uibModalInstance.close($scope.command);

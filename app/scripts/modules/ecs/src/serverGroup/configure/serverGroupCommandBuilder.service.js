@@ -200,6 +200,7 @@ module.exports = angular
             existingPipelineCluster: true,
             dirty: {},
             contextImages: contextImages,
+            pipelineArtifacts: pipeline.expectedArtifacts,
           };
 
           var viewOverrides = {
@@ -223,6 +224,7 @@ module.exports = angular
         return $q.when({
           viewState: {
             contextImages: contextImages,
+            pipelineArtifacts: pipeline.expectedArtifacts,
             requiresTemplateSelection: true,
           },
         });
