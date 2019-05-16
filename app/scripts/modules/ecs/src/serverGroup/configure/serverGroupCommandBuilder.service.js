@@ -141,6 +141,7 @@ module.exports = angular
               healthCheckGracePeriodSeconds: '',
               placementConstraints: [],
               placementStrategyName: '',
+              taskDefinitionArtifact: {},
               placementStrategySequence: [],
               ecsClusterName: '',
               targetGroup: '',
@@ -183,6 +184,8 @@ module.exports = angular
           let contextImages = findUpstreamImages(current, pipeline.stages) || [];
           contextImages = contextImages.concat(findTriggerImages(pipeline.triggers));
 
+          let expectedArtifacts = pipeline.expectedArtifacts;
+
           if (command.docker && command.docker.image) {
             command.docker.image = reconcileUpstreamImages(command.docker.image, contextImages);
           }
@@ -200,7 +203,9 @@ module.exports = angular
             existingPipelineCluster: true,
             dirty: {},
             contextImages: contextImages,
-            pipelineArtifacts: pipeline.expectedArtifacts,
+            expectedArtifacts: expectedArtifacts,
+            pipeline: pipeline,
+            currentStage: current,
           };
 
           var viewOverrides = {
@@ -218,13 +223,16 @@ module.exports = angular
 
       // Only used to prepare view requiring template selecting
       function buildNewServerGroupCommandForPipeline(current, pipeline) {
+        let expectedArtifacts = pipeline.expectedArtifacts;
         let contextImages = findUpstreamImages(current, pipeline.stages) || [];
         contextImages = contextImages.concat(findTriggerImages(pipeline.triggers));
 
         return $q.when({
           viewState: {
             contextImages: contextImages,
-            pipelineArtifacts: pipeline.expectedArtifacts,
+            expectedArtifacts: expectedArtifacts,
+            pipeline: pipeline,
+            currentStage: current,
             requiresTemplateSelection: true,
           },
         });

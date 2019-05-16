@@ -16,6 +16,7 @@
       </label>
     </div>
     <div class="col-md-1 radio">
+      <!--TODO: deactivate if !expectedArtifacts-->
       <label>
         <input
           type="radio"
@@ -33,9 +34,33 @@
       <help-field key="ecs.taskDefinition"></help-field>
     </div>
 
-    <div class="col-md-6"></div>
-    <div>
-      <p>{{ $ctrl.command.viewState.pipelineArtifacts[0] }}</p>
+    <p>{{ $ctrl.command.backingData.artifacts }}</p>
+    <!--TODO: remove-->
+    <div class="col-md-7">
+      <ui-select ng-model="$ctrl.command.selectedTaskDefArtifact" class="form-control input-sm">
+        <ui-select-match>{{ $select.selected.displayName }}</ui-select-match>
+        <ui-select-choices repeat="artifact in $ctrl.command.backingData.artifacts | filter: $select.search">
+          <span ng-bind-html="artifact.displayName"></span>
+        </ui-select-choices>
+      </ui-select>
     </div>
+    <!-- <div>
+        <p>View state: </p>
+      <p>{{ $ctrl.command.onExpectedArtifactSelected }}</p>
+      <p>{{ $ctrl.command.viewState.onArtifactEdited }}</p>
+    </div>
+    <div>
+        <stage-artifact-selector-react 
+          pipeline="$ctrl.command.viewState.pipeline"
+          stage="$ctrl.command.viewState.currentStage"
+          expectedArtifactId="none"
+          artifact="$ctrl.command.taskDefinitionArtifact"
+          onExpectedArtifactSelected="$ctrl.command.onExpectedArtifactSelected()"
+          onArtifactEdited="$ctrl.command.viewState.onArtifactEdited"
+          excludedArtifactIds=""
+          excludedArtifactTypePatterns=""
+          renderLabel="">
+        </stage-artifact-selector-react>
+    </div> -->
   </div>
 </div>
