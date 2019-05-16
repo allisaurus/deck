@@ -6,6 +6,9 @@ import {
   CACHE_INITIALIZER_SERVICE,
   IAccountDetails,
   IDeploymentStrategy,
+  IExpectedArtifact,
+  IPipeline,
+  IStage,
   IRegion,
   IServerGroupCommand,
   IServerGroupCommandBackingData,
@@ -59,6 +62,9 @@ export interface IEcsDockerImage extends IDockerImage {
 
 export interface IEcsServerGroupCommandViewState extends IServerGroupCommandViewState {
   contextImages: IEcsDockerImage[];
+  expectedArtifacts: IExpectedArtifact[];
+  pipeline: IPipeline;
+  currentStage: IStage;
 }
 
 export interface IEcsServerGroupCommandBackingDataFiltered extends IServerGroupCommandBackingDataFiltered {
@@ -85,6 +91,7 @@ export interface IEcsServerGroupCommandBackingData extends IServerGroupCommandBa
   secrets: ISecretDescriptor[];
   serviceDiscoveryRegistries: IServiceDiscoveryRegistryDescriptor[];
   images: IEcsDockerImage[];
+  artifacts: IExpectedArtifact[];
 }
 
 export interface IEcsServerGroupCommand extends IServerGroupCommand {
@@ -102,6 +109,9 @@ export interface IEcsServerGroupCommand extends IServerGroupCommand {
   regionIsDeprecated: (command: IEcsServerGroupCommand) => boolean;
 
   clusterChanged: (command: IServerGroupCommand) => void;
+
+  /* onExpectedArtifactSelected: (expectedArtifact: IExpectedArtifact) => void;
+  onArtifactEdited: (artifact: IArtifact) => void; */
 }
 
 export class EcsServerGroupConfigurationService {
@@ -170,6 +180,16 @@ export class EcsServerGroupConfigurationService {
       );
     };
 
+    /* cmd.onExpectedArtifactSelected = (expectedArtifact: IExpectedArtifact): void => {
+        console.log('onExpectedArtifactSelected called');
+        console.log(expectedArtifact);
+    };
+
+    cmd.onArtifactEdited = (artifact: IArtifact): void => {
+        console.log('onArtifactEdited called');
+        console.log(artifact);
+    }; */
+
     const imageQueries = cmd.imageDescription ? [this.grabImageAndTag(cmd.imageDescription.imageId)] : [];
 
     if (imageQuery) {
@@ -212,6 +232,9 @@ export class EcsServerGroupConfigurationService {
         backingData.filtered = {} as IEcsServerGroupCommandBackingDataFiltered;
         if (cmd.viewState.contextImages) {
           backingData.images = backingData.images.concat(cmd.viewState.contextImages);
+        }
+        if (cmd.viewState.expectedArtifacts) {
+          backingData.artifacts = cmd.viewState.expectedArtifacts;
         }
         cmd.backingData = backingData as IEcsServerGroupCommandBackingData;
         this.configureVpcId(cmd);
@@ -372,7 +395,7 @@ export class EcsServerGroupConfigurationService {
 
   public configureAvailableRegions(command: IEcsServerGroupCommand): void {
     const regionsForAccount: IAccountDetails =
-    command.backingData.credentialsKeyedByAccount[command.credentials] || ({ regions: [] } as IAccountDetails);
+      command.backingData.credentialsKeyedByAccount[command.credentials] || ({ regions: [] } as IAccountDetails);
     command.backingData.filtered.regions = regionsForAccount.regions;
   }
 
