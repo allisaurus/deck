@@ -209,6 +209,8 @@ module.exports = angular
 
       // save/commit func
       this.submit = function() {
+        console.log('submitted artifact:'); //eslint-disable-line
+        console.log($scope.command.selectedTaskDefArtifact); //eslint-disable-line
         if ($scope.command.viewState.mode === 'editPipeline' || $scope.command.viewState.mode === 'createPipeline') {
           return $uibModalInstance.close($scope.command);
         }
