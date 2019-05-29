@@ -5,6 +5,7 @@ import {
   AccountService,
   CACHE_INITIALIZER_SERVICE,
   IAccountDetails,
+  IArtifact,
   IDeploymentStrategy,
   IExpectedArtifact,
   IPipeline,
@@ -94,6 +95,11 @@ export interface IEcsServerGroupCommandBackingData extends IServerGroupCommandBa
   artifacts: IExpectedArtifact[];
 }
 
+export interface IEcsTaskDefinitionArtifact {
+  artifact: IArtifact;
+  artifactId: string;
+}
+
 export interface IEcsServerGroupCommand extends IServerGroupCommand {
   backingData: IEcsServerGroupCommandBackingData;
   targetHealthyDeployPercentage: number;
@@ -102,6 +108,7 @@ export interface IEcsServerGroupCommand extends IServerGroupCommand {
   placementStrategySequence: IPlacementStrategy[];
   imageDescription: IEcsDockerImage;
   viewState: IEcsServerGroupCommandViewState;
+  taskDefinitionArtifact: IEcsTaskDefinitionArtifact;
 
   subnetTypeChanged: (command: IEcsServerGroupCommand) => IServerGroupCommandResult;
   placementStrategyNameChanged: (command: IEcsServerGroupCommand) => IServerGroupCommandResult;
@@ -109,9 +116,6 @@ export interface IEcsServerGroupCommand extends IServerGroupCommand {
   regionIsDeprecated: (command: IEcsServerGroupCommand) => boolean;
 
   clusterChanged: (command: IServerGroupCommand) => void;
-
-  /* onExpectedArtifactSelected: (expectedArtifact: IExpectedArtifact) => void;
-  onArtifactEdited: (artifact: IArtifact) => void; */
 }
 
 export class EcsServerGroupConfigurationService {
@@ -179,16 +183,6 @@ export class EcsServerGroupConfigurationService {
         command.backingData.filtered.regions.some(region => region.name === command.region && region.deprecated)
       );
     };
-
-    /* cmd.onExpectedArtifactSelected = (expectedArtifact: IExpectedArtifact): void => {
-        console.log('onExpectedArtifactSelected called');
-        console.log(expectedArtifact);
-    };
-
-    cmd.onArtifactEdited = (artifact: IArtifact): void => {
-        console.log('onArtifactEdited called');
-        console.log(artifact);
-    }; */
 
     const imageQueries = cmd.imageDescription ? [this.grabImageAndTag(cmd.imageDescription.imageId)] : [];
 

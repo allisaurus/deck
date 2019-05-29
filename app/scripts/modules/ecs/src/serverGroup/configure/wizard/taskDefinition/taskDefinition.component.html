@@ -8,7 +8,7 @@
       <label>
         <input
           type="radio"
-          ng-model="$ctrl.command.taskDefinitionFromArtifact"
+          ng-model="$ctrl.command.useTaskDefinitionArtifact"
           ng-value="false"
           id="taskDefinitionInputs"
         />
@@ -20,7 +20,7 @@
       <label>
         <input
           type="radio"
-          ng-model="$ctrl.command.taskDefinitionFromArtifact"
+          ng-model="$ctrl.command.useTaskDefinitionArtifact"
           ng-value="true"
           id="taskDefinitionArtifact"
         />
@@ -28,16 +28,14 @@
       </label>
     </div>
   </div>
-  <div class="form-group" ng-if="$ctrl.command.taskDefinitionFromArtifact">
+  <div class="form-group" ng-if="$ctrl.command.useTaskDefinitionArtifact">
     <div class="col-md-4 sm-label-right">
       <b>Task Definition Artifact</b>
       <help-field key="ecs.taskDefinition"></help-field>
     </div>
 
-    <!-- <p>{{ $ctrl.command.selectedTaskDefArtifact }}</p> -->
-    <!--TODO: remove-->
-    <div class="col-md-7">
-      <ui-select ng-model="$ctrl.command.selectedTaskDefArtifact" class="form-control input-sm">
+    <!-- <div class="col-md-7">
+      <ui-select ng-model="$ctrl.command.taskDefinitionArtifact.artifact" class="form-control input-sm">
         <ui-select-match placeholder="Select the task definition artifact...">{{
           $select.selected.displayName
         }}</ui-select-match>
@@ -45,24 +43,6 @@
           <span ng-bind-html="artifact.displayName"></span>
         </ui-select-choices>
       </ui-select>
-    </div>
-    <!-- <div>
-        <p>View state: </p>
-      <p>{{ $ctrl.command.onExpectedArtifactSelected }}</p>
-      <p>{{ $ctrl.command.viewState.onArtifactEdited }}</p>
-    </div>
-    <div>
-        <stage-artifact-selector-react 
-          pipeline="$ctrl.command.viewState.pipeline"
-          stage="$ctrl.command.viewState.currentStage"
-          expectedArtifactId="none"
-          artifact="$ctrl.command.taskDefinitionArtifact"
-          onExpectedArtifactSelected="$ctrl.command.onExpectedArtifactSelected()"
-          onArtifactEdited="$ctrl.command.viewState.onArtifactEdited"
-          excludedArtifactIds=""
-          excludedArtifactTypePatterns=""
-          renderLabel="">
-        </stage-artifact-selector-react>
     </div> -->
   </div>
 </div>
