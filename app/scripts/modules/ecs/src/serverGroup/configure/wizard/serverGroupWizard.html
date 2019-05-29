@@ -16,7 +16,7 @@
       <v2-wizard-page key="taskDefinition" label="Task Definition" done="true">
         <ng-include src="pages.taskDefinition"></ng-include>
       </v2-wizard-page>
-      <div ng-if="!command.taskDefinitionFromArtifact">
+      <div ng-if="!command.useTaskDefinitionArtifact">
         <v2-wizard-page key="container" label="Container" done="true">
           <ng-include src="pages.container"></ng-include>
         </v2-wizard-page>

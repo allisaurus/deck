@@ -75,7 +75,10 @@ module.exports = angular
         ),
         networking: overrideRegistry.getTemplate('ecs.serverGroup.networking', require('./networking/networking.html')),
         logging: overrideRegistry.getTemplate('ecs.serverGroup.logging', require('./logging/logging.html')),
-        serviceDiscovery: overrideRegistry.getTemplate('ecs.serverGroup.serviceDiscovery', require('./serviceDiscovery/serviceDiscovery.html')),
+        serviceDiscovery: overrideRegistry.getTemplate(
+          'ecs.serverGroup.serviceDiscovery',
+          require('./serviceDiscovery/serviceDiscovery.html'),
+        ),
         advancedSettings: overrideRegistry.getTemplate(
           'ecs.serverGroup.advancedSettings',
           require('./advancedSettings/advancedSettings.html'),
@@ -98,8 +101,20 @@ module.exports = angular
         requiresTemplateSelection: !!serverGroupCommand.viewState.requiresTemplateSelection,
       };
 
-      $scope.command.taskDefinitionFromArtifact = false; // new
-      $scope.command.selectedTaskDefArtifact = '';
+      console.log('existing task def found'); //eslint-disable-line
+      console.log($scope.command.taskDefinitionArtifact); //eslint-disable-line
+
+      /* if ($scope.command.taskDefinitionArtifact) {
+        $scope.command.useTaskDefinitionArtifact = true;
+        console.log('existing task def found'); //eslint-disable-line
+        console.log($scope.command.taskDefinitionArtifact); //eslint-disable-line
+      } else {
+        $scope.command.useTaskDefinitionArtifact = false;
+        $scope.command.taskDefinitionArtifact = {
+          artifactId: '', // string
+          artifact: {}, // IArtifact
+        };
+      } */
 
       this.templateSelectionText = {
         copied: [
@@ -210,8 +225,13 @@ module.exports = angular
 
       // save/commit func
       this.submit = function() {
+        if ($scope.command.taskDefinitionArtifact.artifact) {
+          let expectedArtifact = $scope.command.taskDefinitionArtifact.artifact;
+          $scope.command.taskDefinitionArtifact.artifactId = expectedArtifact.matchArtifact.id;
+          $scope.command.taskDefinitionArtifact.artifact = expectedArtifact.matchArtifact;
+        }
         console.log('submitted artifact:'); //eslint-disable-line
-        console.log($scope.command.selectedTaskDefArtifact); //eslint-disable-line
+        console.log($scope.command.taskDefinitionArtifact); //eslint-disable-line
         if ($scope.command.viewState.mode === 'editPipeline' || $scope.command.viewState.mode === 'createPipeline') {
           return $uibModalInstance.close($scope.command);
         }
@@ -233,6 +253,14 @@ module.exports = angular
       this.templateSelected = () => {
         $scope.state.requiresTemplateSelection = false;
         configureCommand();
+      };
+
+      $scope.notifyAngular = function(key, value) {
+        console.log('the key is: ' + key); //eslint-disable-line
+        $scope.command.taskDefinitionArtifact = value;
+
+        console.log('taskDefinitionArtifact is now:'); //eslint-disable-line
+        console.log($scope.command.taskDefinitionArtifact); //eslint-disable-line
       };
     },
   ]);
