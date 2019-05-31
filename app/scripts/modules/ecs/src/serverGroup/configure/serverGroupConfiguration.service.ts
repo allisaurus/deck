@@ -96,8 +96,8 @@ export interface IEcsServerGroupCommandBackingData extends IServerGroupCommandBa
 }
 
 export interface IEcsTaskDefinitionArtifact {
-  artifact: IArtifact;
-  artifactId: string;
+  artifact?: IArtifact;
+  artifactId?: string;
 }
 
 export interface IEcsServerGroupCommand extends IServerGroupCommand {

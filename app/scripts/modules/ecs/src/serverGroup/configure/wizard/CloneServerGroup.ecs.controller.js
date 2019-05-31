@@ -101,7 +101,10 @@ module.exports = angular
         requiresTemplateSelection: !!serverGroupCommand.viewState.requiresTemplateSelection,
       };
 
-      if ($scope.command.taskDefinitionArtifact) {
+      console.log('existing task def found'); //eslint-disable-line
+      console.log($scope.command.taskDefinitionArtifact); //eslint-disable-line
+
+      /* if ($scope.command.taskDefinitionArtifact) {
         $scope.command.useTaskDefinitionArtifact = true;
         console.log('existing task def found'); //eslint-disable-line
         console.log($scope.command.taskDefinitionArtifact); //eslint-disable-line
@@ -111,7 +114,7 @@ module.exports = angular
           artifactId: '', // string
           artifact: {}, // IArtifact
         };
-      }
+      } */
 
       this.templateSelectionText = {
         copied: [
@@ -250,6 +253,14 @@ module.exports = angular
       this.templateSelected = () => {
         $scope.state.requiresTemplateSelection = false;
         configureCommand();
+      };
+
+      $scope.notifyAngular = function(key, value) {
+        console.log('the key is: ' + key); //eslint-disable-line
+        $scope.command.taskDefinitionArtifact = value;
+
+        console.log('taskDefinitionArtifact is now:'); //eslint-disable-line
+        console.log($scope.command.taskDefinitionArtifact); //eslint-disable-line
       };
     },
   ]);
