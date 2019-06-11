@@ -39,7 +39,6 @@ angular
     require('./serverGroup/configure/wizard/advancedSettings/advancedSettings.component').name,
     require('./serverGroup/configure/wizard/container/container.component').name,
     require('./serverGroup/configure/wizard/horizontalScaling/horizontalScaling.component').name,
-    require('./serverGroup/configure/wizard/taskDefinition/taskDefinition.component').name,
     TASK_DEFINITION_REACT,
     ECS_SERVER_GROUP_LOGGING,
     ECS_NETWORKING_SECTION,
