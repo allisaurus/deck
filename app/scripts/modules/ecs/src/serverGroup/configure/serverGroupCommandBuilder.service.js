@@ -95,6 +95,7 @@ module.exports = angular
       }
 
       function buildNewServerGroupCommand(application, defaults) {
+        console.log("'buildNewServerGroupCommand' called"); // eslint-disable-line
         defaults = defaults || {};
         var credentialsLoader = AccountService.getCredentialsKeyedByAccount('ecs');
 
@@ -171,6 +172,8 @@ module.exports = angular
       }
 
       function buildServerGroupCommandFromPipeline(application, originalCluster, current, pipeline) {
+        console.log("'buildServerGroupCommandFromPipeline' called"); // eslint-disable-line
+        // console.log(originalCluster); // eslint-disable-line
         var pipelineCluster = _.cloneDeep(originalCluster);
         var region = Object.keys(pipelineCluster.availabilityZones)[0];
         // var instanceTypeCategoryLoader = instanceTypeService.getCategoryForInstanceType('ecs', pipelineCluster.instanceType);
@@ -185,7 +188,7 @@ module.exports = angular
           let contextImages = findUpstreamImages(current, pipeline.stages) || [];
           contextImages = contextImages.concat(findTriggerImages(pipeline.triggers));
 
-          let expectedArtifacts = pipeline.expectedArtifacts;
+          //let expectedArtifacts = pipeline.expectedArtifacts;
 
           if (command.docker && command.docker.image) {
             command.docker.image = reconcileUpstreamImages(command.docker.image, contextImages);
@@ -204,7 +207,7 @@ module.exports = angular
             existingPipelineCluster: true,
             dirty: {},
             contextImages: contextImages,
-            expectedArtifacts: expectedArtifacts,
+            // expectedArtifacts: expectedArtifacts,
             pipeline: pipeline,
             currentStage: current,
           };
@@ -218,20 +221,27 @@ module.exports = angular
 
           pipelineCluster.strategy = pipelineCluster.strategy || '';
 
+          console.log('context images!'); // eslint-disable-line
+          console.log(contextImages); // eslint-disable-line
+
           return angular.extend({}, command, pipelineCluster, viewOverrides);
         });
       }
 
       // Only used to prepare view requiring template selecting
       function buildNewServerGroupCommandForPipeline(current, pipeline) {
-        let expectedArtifacts = pipeline.expectedArtifacts;
+        console.log("'buildNewServerGroupCommandForPipeline' called"); // eslint-disable-line
+        //let expectedArtifacts = pipeline.expectedArtifacts;
         let contextImages = findUpstreamImages(current, pipeline.stages) || [];
         contextImages = contextImages.concat(findTriggerImages(pipeline.triggers));
+
+        console.log('context images!'); // eslint-disable-line
+        console.log(contextImages); // eslint-disable-line
 
         return $q.when({
           viewState: {
             contextImages: contextImages,
-            expectedArtifacts: expectedArtifacts,
+            //expectedArtifacts: expectedArtifacts,
             pipeline: pipeline,
             currentStage: current,
             requiresTemplateSelection: true,
@@ -240,6 +250,7 @@ module.exports = angular
       }
 
       function buildUpdateServerGroupCommand(serverGroup) {
+        console.log("'buildUpdateServerGroupCommand' called"); // eslint-disable-line
         var command = {
           type: 'modifyAsg',
           asgs: [{ asgName: serverGroup.name, region: serverGroup.region }],
@@ -251,6 +262,7 @@ module.exports = angular
       }
 
       function buildServerGroupCommandFromExisting(application, serverGroup, mode = 'clone') {
+        console.log("'buildServerGroupCommandFromExisting' called"); // eslint-disable-line
         var preferredZonesLoader = AccountService.getPreferredZonesByAccount('ecs');
 
         var serverGroupName = NameUtils.parseServerGroupName(serverGroup.asg.autoScalingGroupName);
@@ -297,6 +309,9 @@ module.exports = angular
               .map(process => process.processName)
               .filter(name => !enabledProcesses.includes(name)),
             targetGroup: serverGroup.targetGroup,
+            taskDefinitionArtifact: {},
+            useTaskDefinitionArtifact: false,
+            containerMappings: [],
             copySourceScalingPoliciesAndActions: true,
             viewState: {
               instanceProfile: asyncData.instanceProfile,
