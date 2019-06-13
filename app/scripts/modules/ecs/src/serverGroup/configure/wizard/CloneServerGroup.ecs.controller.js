@@ -101,20 +101,9 @@ module.exports = angular
         requiresTemplateSelection: !!serverGroupCommand.viewState.requiresTemplateSelection,
       };
 
-      console.log('existing task def found'); //eslint-disable-line
-      console.log($scope.command.taskDefinitionArtifact); //eslint-disable-line
-
-      /* if ($scope.command.taskDefinitionArtifact) {
-        $scope.command.useTaskDefinitionArtifact = true;
-        console.log('existing task def found'); //eslint-disable-line
-        console.log($scope.command.taskDefinitionArtifact); //eslint-disable-line
-      } else {
-        $scope.command.useTaskDefinitionArtifact = false;
-        $scope.command.taskDefinitionArtifact = {
-          artifactId: '', // string
-          artifact: {}, // IArtifact
-        };
-      } */
+      // TODO: remove me!
+      //console.log('existing task def found'); //eslint-disable-line
+      //console.log($scope.command.taskDefinitionArtifact); //eslint-disable-line
 
       this.templateSelectionText = {
         copied: [
@@ -255,12 +244,13 @@ module.exports = angular
         configureCommand();
       };
 
-      $scope.notifyAngular = function(key, value) {
-        console.log('the key is: ' + key); //eslint-disable-line
-        $scope.command.taskDefinitionArtifact = value;
+      // used by react components to update command fields in parent (angular) scope
+      $scope.notifyAngular = function(commandKey, value) {
+        console.log('the key is: ' + commandKey); //eslint-disable-line
+        $scope.command[commandKey] = value;
 
-        console.log('taskDefinitionArtifact is now:'); //eslint-disable-line
-        console.log($scope.command.taskDefinitionArtifact); //eslint-disable-line
+        console.log(commandKey + ' is now:'); //eslint-disable-line
+        console.log($scope.command[commandKey]); //eslint-disable-line
       };
     },
   ]);
