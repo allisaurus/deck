@@ -300,7 +300,6 @@ export class EcsServerGroupConfigurationService {
   public configureAvailableImages(command: IEcsServerGroupCommand): void {
     // No filtering required, but need to decorate with the displayable image ID
     command.backingData.filtered.images = command.backingData.images.map(image => this.mapImage(image));
-    console.log(command.backingData.images); // eslint-disable-line
     console.log(command.backingData.filtered.images); // eslint-disable-line
   }
 
