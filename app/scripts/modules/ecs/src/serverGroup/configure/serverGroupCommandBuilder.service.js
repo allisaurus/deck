@@ -142,6 +142,7 @@ module.exports = angular
               placementConstraints: [],
               placementStrategyName: '',
               taskDefinitionArtifact: {},
+              useTaskDefinitionArtifact: false,
               placementStrategySequence: [],
               serviceDiscoveryAssociations: [],
               ecsClusterName: '',
@@ -227,10 +228,16 @@ module.exports = angular
         // TODO: figure out why context images not set after this
         return $q.when({
           viewState: {
-            contextImages: contextImages,
-            pipeline: pipeline,
-            currentStage: current,
+            // prompt for template selection on new server groups
             requiresTemplateSelection: true,
+            // applies viewState overrides after template selection
+            overrides: {
+              viewState: {
+                contextImages: contextImages,
+                pipeline: pipeline,
+                currentStage: current,
+              },
+            },
           },
         });
       }
@@ -249,6 +256,7 @@ module.exports = angular
       function buildServerGroupCommandFromExisting(application, serverGroup, mode = 'clone') {
         var preferredZonesLoader = AccountService.getPreferredZonesByAccount('ecs');
 
+        // TODO: not set when called w/ existing template, might need to call buildUpdateServerGroupCommand?
         var serverGroupName = NameUtils.parseServerGroupName(serverGroup.asg.autoScalingGroupName);
 
         var asyncLoader = $q.all({

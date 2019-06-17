@@ -104,7 +104,6 @@ export class TaskDefinition extends React.Component<ITaskDefinitionProps, ITaskD
   };
 
   private removeMapping = (index: number) => {
-    console.log('REMOVE clicked: ' + index.toString()); // eslint-disable-line
     const currentState = cloneDeep(this.state);
     currentState.containerMappings.splice(index, 1);
 

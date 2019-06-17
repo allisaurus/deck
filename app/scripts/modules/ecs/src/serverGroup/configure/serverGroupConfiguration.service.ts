@@ -162,7 +162,6 @@ export class EcsServerGroupConfigurationService {
 
   // TODO (Bruno Carrier): Why do we need to inject an Application into this constructor so that the app works?  This is strange, and needs investigating
   public configureCommand(cmd: IEcsServerGroupCommand, imageQuery = ''): IPromise<void> {
-    console.log('configureCommand called. imageQuery: ' + imageQuery); // eslint-disable-line
     this.applyOverrides('beforeConfiguration', cmd);
     cmd.toggleSuspendedProcess = (command: IEcsServerGroupCommand, process: string): void => {
       command.suspendedProcesses = command.suspendedProcesses || [];
@@ -232,14 +231,9 @@ export class EcsServerGroupConfigurationService {
         backingData.accounts = keys(backingData.credentialsKeyedByAccount);
         backingData.filtered = {} as IEcsServerGroupCommandBackingDataFiltered;
 
-        console.log(cmd.viewState); // eslint-disable-line
         if (cmd.viewState.contextImages) {
-          console.log('cmd.viewState.contextImages is truthy'); // eslint-disable-line
           backingData.images = backingData.images.concat(cmd.viewState.contextImages);
         }
-        /* if (cmd.viewState.expectedArtifacts) {
-          backingData.artifacts = cmd.viewState.expectedArtifacts;
-        } */
         cmd.backingData = backingData as IEcsServerGroupCommandBackingData;
         this.configureVpcId(cmd);
         this.configureAvailableIamRoles(cmd);
@@ -300,7 +294,6 @@ export class EcsServerGroupConfigurationService {
   public configureAvailableImages(command: IEcsServerGroupCommand): void {
     // No filtering required, but need to decorate with the displayable image ID
     command.backingData.filtered.images = command.backingData.images.map(image => this.mapImage(image));
-    console.log(command.backingData.filtered.images); // eslint-disable-line
   }
 
   public configureAvailabilityZones(command: IEcsServerGroupCommand): void {

@@ -101,10 +101,6 @@ module.exports = angular
         requiresTemplateSelection: !!serverGroupCommand.viewState.requiresTemplateSelection,
       };
 
-      // TODO: remove me!
-      //console.log('existing task def found'); //eslint-disable-line
-      //console.log($scope.command.taskDefinitionArtifact); //eslint-disable-line
-
       this.templateSelectionText = {
         copied: [
           'account, region, subnet, cluster name (stack, details)',
@@ -167,7 +163,7 @@ module.exports = angular
       });
 
       function configureCommand() {
-        ecsServerGroupConfigurationService.configureCommand(serverGroupCommand).then(function() {
+        ecsServerGroupConfigurationService.configureCommand($scope.command).then(function() {
           $scope.state.loaded = true;
           initializeCommand();
           initializeSelectOptions();
@@ -230,8 +226,10 @@ module.exports = angular
       };
 
       if (!$scope.state.requiresTemplateSelection) {
+        console.log('template selection required!'); // eslint-disable-line
         configureCommand();
       } else {
+        console.log('template selection wasnt required...'); // eslint-disable-line
         $scope.state.loaded = true;
       }
 
