@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { module } from 'angular';
+import { module, IPromise } from 'angular';
 import { cloneDeep } from 'lodash';
 import { react2angular } from 'react2angular';
 import {
@@ -13,26 +13,36 @@ import { ArtifactTypePatterns, HelpField, IArtifact, IExpectedArtifact, StageArt
 export interface ITaskDefinitionProps {
   command: IEcsServerGroupCommand;
   notifyAngular: (key: string, value: any) => void;
+  configureCommand: (query: string) => IPromise<void>;
 }
 
 interface ITaskDefinitionState {
   taskDefArtifact: IEcsTaskDefinitionArtifact;
   containerMappings: IEcsContainerMapping[];
+  dockerImages: IEcsDockerImage[];
 }
 
 export class TaskDefinition extends React.Component<ITaskDefinitionProps, ITaskDefinitionState> {
   constructor(props: ITaskDefinitionProps) {
     super(props);
-    let mappings = this.props.command.containerMappings;
-
-    if (!mappings) {
-      mappings = [];
-    }
+    const cmd = this.props.command;
 
     this.state = {
-      taskDefArtifact: this.props.command.taskDefinitionArtifact,
-      containerMappings: mappings,
+      taskDefArtifact: cmd.taskDefinitionArtifact,
+      containerMappings: cmd.containerMappings ? cmd.containerMappings : [],
+      dockerImages: cmd.backingData && cmd.backingData.filtered ? cmd.backingData.filtered.images : [],
     };
+  }
+
+  componentDidMount() {
+    this.props.configureCommand('1').then(() => {
+      const currentState = cloneDeep(this.state);
+      this.setState({
+        taskDefArtifact: currentState.taskDefArtifact,
+        containerMappings: currentState.containerMappings,
+        dockerImages: this.props.command.backingData.filtered.images,
+      });
+    });
   }
 
   private getIdToImageMap = (): Map<string, IEcsDockerImage> => {
@@ -85,7 +95,6 @@ export class TaskDefinition extends React.Component<ITaskDefinitionProps, ITaskD
   private updateContainerMappingName = (index: number, newName: string) => {
     const currentState = cloneDeep(this.state);
     const currentMapping = currentState.containerMappings[index];
-
     currentMapping.containerName = newName;
 
     this.props.notifyAngular('containerMappings', currentState.containerMappings);
@@ -96,7 +105,6 @@ export class TaskDefinition extends React.Component<ITaskDefinitionProps, ITaskD
     const imageMap = this.getIdToImageMap();
     const currentState = cloneDeep(this.state);
     const currentMapping = currentState.containerMappings[index];
-
     currentMapping.imageDescription = imageMap.get(newImage);
 
     this.props.notifyAngular('containerMappings', currentState.containerMappings);
@@ -117,16 +125,13 @@ export class TaskDefinition extends React.Component<ITaskDefinitionProps, ITaskD
     const updateContainerMappingName = this.updateContainerMappingName;
     const updateContainerMappingImage = this.updateContainerMappingImage;
 
-    let dockerImages;
-    if (command.backingData && command.backingData.filtered && command.backingData.filtered.images) {
-      dockerImages = command.backingData.filtered.images.map(function(image, index) {
-        return (
-          <option key={index} value={image.imageId}>
-            {image.imageId}
-          </option>
-        );
-      });
-    }
+    let dockerImages = this.state.dockerImages.map(function(image, index) {
+      return (
+        <option key={index} value={image.imageId}>
+          {image.imageId}
+        </option>
+      );
+    });
 
     const mappingInputs = this.state.containerMappings.map(function(mapping, index) {
       return (
@@ -222,5 +227,5 @@ export class TaskDefinition extends React.Component<ITaskDefinitionProps, ITaskD
 export const TASK_DEFINITION_REACT = 'spinnaker.ecs.serverGroup.configure.wizard.taskDefinition.react';
 module(TASK_DEFINITION_REACT, []).component(
   'taskDefinitionReact',
-  react2angular(TaskDefinition, ['command', 'notifyAngular']),
+  react2angular(TaskDefinition, ['command', 'notifyAngular', 'configureCommand']),
 );

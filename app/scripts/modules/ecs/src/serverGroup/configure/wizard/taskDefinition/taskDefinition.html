@@ -34,7 +34,11 @@
     </div>
     <div class="col-md-12" ng-if="command.useTaskDefinitionArtifact">
       <hr />
-      <task-definition-react command="command" notify-angular="notifyAngular"></task-definition-react>
+      <task-definition-react
+        command="command"
+        notify-angular="notifyAngular"
+        configure-command="configureCommand"
+      ></task-definition-react>
     </div>
   </div>
 </div>

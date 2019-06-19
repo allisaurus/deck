@@ -210,9 +210,6 @@ module.exports = angular
 
       // save/commit func
       this.submit = function() {
-        console.log('submitted "containerMappings" and "taskDefinitionArtifact": '); //eslint-disable-line
-        console.log($scope.command.containerMappings); //eslint-disable-line
-        console.log($scope.command.taskDefinitionArtifact); //eslint-disable-line
         if ($scope.command.viewState.mode === 'editPipeline' || $scope.command.viewState.mode === 'createPipeline') {
           return $uibModalInstance.close($scope.command);
         }
@@ -226,10 +223,8 @@ module.exports = angular
       };
 
       if (!$scope.state.requiresTemplateSelection) {
-        console.log('template selection required!'); // eslint-disable-line
         configureCommand();
       } else {
-        console.log('template selection wasnt required...'); // eslint-disable-line
         $scope.state.loaded = true;
       }
 
@@ -240,12 +235,12 @@ module.exports = angular
 
       // used by react components to update command fields in parent (angular) scope
       $scope.notifyAngular = function(commandKey, value) {
-        console.log('the value of ' + commandKey + 'is: '); //eslint-disable-line
-        console.log(value); //eslint-disable-line
         $scope.command[commandKey] = value;
+      };
 
-        console.log(commandKey + ' is now:'); //eslint-disable-line
-        console.log($scope.command[commandKey]); //eslint-disable-line
+      // used by react components to configure command for image queries
+      $scope.configureCommand = function(query) {
+        return ecsServerGroupConfigurationService.configureCommand($scope.command, query);
       };
     },
   ]);
