@@ -115,6 +115,7 @@ export interface IEcsServerGroupCommand extends IServerGroupCommand {
   viewState: IEcsServerGroupCommandViewState;
   taskDefinitionArtifact: IEcsTaskDefinitionArtifact;
   containerMappings: IEcsContainerMapping[];
+  loadBalancedContainer: string;
 
   subnetTypeChanged: (command: IEcsServerGroupCommand) => IServerGroupCommandResult;
   placementStrategyNameChanged: (command: IEcsServerGroupCommand) => IServerGroupCommandResult;

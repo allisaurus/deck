@@ -235,6 +235,8 @@ module.exports = angular
 
       // used by react components to update command fields in parent (angular) scope
       $scope.notifyAngular = function(commandKey, value) {
+        console.log('value for ' + commandKey + ' is:'); // eslint-disable-line
+        console.log(value); // eslint-disable-line
         $scope.command[commandKey] = value;
       };
 

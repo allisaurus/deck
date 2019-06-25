@@ -304,6 +304,7 @@ module.exports = angular
             taskDefinitionArtifact: {},
             useTaskDefinitionArtifact: false,
             containerMappings: [],
+            loadBalancedContainer: '',
             copySourceScalingPoliciesAndActions: true,
             viewState: {
               instanceProfile: asyncData.instanceProfile,

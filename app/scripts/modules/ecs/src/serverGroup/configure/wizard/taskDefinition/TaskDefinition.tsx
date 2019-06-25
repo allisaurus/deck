@@ -20,6 +20,7 @@ interface ITaskDefinitionState {
   taskDefArtifact: IEcsTaskDefinitionArtifact;
   containerMappings: IEcsContainerMapping[];
   dockerImages: IEcsDockerImage[];
+  loadBalancedContainer: string;
 }
 
 export class TaskDefinition extends React.Component<ITaskDefinitionProps, ITaskDefinitionState> {
@@ -31,7 +32,10 @@ export class TaskDefinition extends React.Component<ITaskDefinitionProps, ITaskD
       taskDefArtifact: cmd.taskDefinitionArtifact,
       containerMappings: cmd.containerMappings ? cmd.containerMappings : [],
       dockerImages: cmd.backingData && cmd.backingData.filtered ? cmd.backingData.filtered.images : [],
+      loadBalancedContainer: cmd.loadBalancedContainer || cmd.containerMappings[0].containerName || '',
     };
+
+    // TODO: if LB container state is set, set upstream
   }
 
   componentDidMount() {
@@ -111,6 +115,11 @@ export class TaskDefinition extends React.Component<ITaskDefinitionProps, ITaskD
     this.setState(currentState);
   };
 
+  private updateLoadBalancedContainer = (containerName: string) => {
+    this.props.notifyAngular('loadBalancedContainer', containerName);
+    this.setState({ loadBalancedContainer: containerName });
+  };
+
   private removeMapping = (index: number) => {
     const currentState = cloneDeep(this.state);
     currentState.containerMappings.splice(index, 1);
@@ -166,6 +175,14 @@ export class TaskDefinition extends React.Component<ITaskDefinitionProps, ITaskD
       );
     });
 
+    const containerOptions = this.state.containerMappings.map(function(mapping, index) {
+      return (
+        <option key={index} value={mapping.containerName}>
+          {mapping.containerName}
+        </option>
+      );
+    });
+
     return (
       <div className="container-fluid form-horizontal">
         <div className="form-group">
@@ -183,6 +200,23 @@ export class TaskDefinition extends React.Component<ITaskDefinitionProps, ITaskD
               onArtifactEdited={this.onArtifactEdited}
               excludedArtifactTypePatterns={this.excludedArtifactTypePatterns}
             />
+          </div>
+        </div>
+        <div className="form-group">
+          <div className="col-md-3 sm-label-right">
+            <strong>Load balanced container</strong>
+            <HelpField id="ecs.taskDefinition" />
+          </div>
+          <div className="col-md-9">
+            <select
+              className="form-control input-sm"
+              required
+              value={this.state.loadBalancedContainer}
+              onChange={e => this.updateLoadBalancedContainer(e.target.value)}
+            >
+              <option value={''}>{'Select a container for load balancer traffic...'}</option>
+              {containerOptions}
+            </select>
           </div>
         </div>
         <div className="form-group">
