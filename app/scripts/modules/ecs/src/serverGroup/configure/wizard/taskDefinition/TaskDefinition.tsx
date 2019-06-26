@@ -8,7 +8,14 @@ import {
   IEcsServerGroupCommand,
   IEcsTaskDefinitionArtifact,
 } from '../../serverGroupConfiguration.service';
-import { ArtifactTypePatterns, HelpField, IArtifact, IExpectedArtifact, StageArtifactSelector } from '@spinnaker/core';
+import {
+  ArtifactTypePatterns,
+  HelpField,
+  IArtifact,
+  IExpectedArtifact,
+  IPipeline,
+  StageArtifactSelectorDelegate,
+} from '@spinnaker/core';
 
 export interface ITaskDefinitionProps {
   command: IEcsServerGroupCommand;
@@ -18,6 +25,7 @@ export interface ITaskDefinitionProps {
 
 interface ITaskDefinitionState {
   taskDefArtifact: IEcsTaskDefinitionArtifact;
+  taskDefArtifactAccount: string;
   containerMappings: IEcsContainerMapping[];
   dockerImages: IEcsDockerImage[];
   loadBalancedContainer: string;
@@ -33,12 +41,11 @@ export class TaskDefinition extends React.Component<ITaskDefinitionProps, ITaskD
       containerMappings: cmd.containerMappings ? cmd.containerMappings : [],
       dockerImages: cmd.backingData && cmd.backingData.filtered ? cmd.backingData.filtered.images : [],
       loadBalancedContainer: cmd.loadBalancedContainer || cmd.containerMappings[0].containerName || '',
+      taskDefArtifactAccount: cmd.taskDefinitionArtifactAccount,
     };
-
-    // TODO: if LB container state is set, set upstream
   }
 
-  componentDidMount() {
+  public componentDidMount() {
     this.props.configureCommand('1').then(() => {
       const currentState = cloneDeep(this.state);
       this.setState({
@@ -65,8 +72,8 @@ export class TaskDefinition extends React.Component<ITaskDefinitionProps, ITaskD
     ArtifactTypePatterns.EMBEDDED_BASE64,
   ];
 
-  private onExpectedArtifactSelected = (expectedArtifact: IExpectedArtifact): void => {
-    const selectedArtifact = { artifactId: expectedArtifact.id };
+  private onExpectedArtifactSelected = (expectedArtifactId: string): void => {
+    const selectedArtifact = { artifactId: expectedArtifactId };
     this.props.notifyAngular('taskDefinitionArtifact', selectedArtifact);
     this.setState({ taskDefArtifact: selectedArtifact });
   };
@@ -75,6 +82,16 @@ export class TaskDefinition extends React.Component<ITaskDefinitionProps, ITaskD
     const newArtifact = { artifact: artifact };
     this.props.notifyAngular('taskDefinitionArtifact', newArtifact);
     this.setState({ taskDefArtifact: newArtifact });
+  };
+
+  private setArtifactAccount = (accountName: string): void => {
+    this.props.notifyAngular('taskDefinitionArtifactAccount', accountName);
+    this.setState({ taskDefArtifactAccount: accountName });
+  };
+
+  private updatePipeline = (pipeline: IPipeline): void => {
+    // TODO: actually update
+    console.log(pipeline); // eslint-disable-line
   };
 
   private pushMapping = () => {
@@ -134,7 +151,7 @@ export class TaskDefinition extends React.Component<ITaskDefinitionProps, ITaskD
     const updateContainerMappingName = this.updateContainerMappingName;
     const updateContainerMappingImage = this.updateContainerMappingImage;
 
-    let dockerImages = this.state.dockerImages.map(function(image, index) {
+    const dockerImages = this.state.dockerImages.map(function(image, index) {
       return (
         <option key={index} value={image.imageId}>
           {image.imageId}
@@ -186,19 +203,22 @@ export class TaskDefinition extends React.Component<ITaskDefinitionProps, ITaskD
     return (
       <div className="container-fluid form-horizontal">
         <div className="form-group">
-          <div className="col-md-3 sm-label-right">
-            <strong>Artifact</strong>
-            <HelpField id="ecs.taskDefinition" />
-          </div>
-          <div className="col-md-9">
-            <StageArtifactSelector
-              pipeline={command.viewState.pipeline}
-              stage={command.viewState.currentStage}
-              expectedArtifactId={this.state.taskDefArtifact.artifactId}
+          <div className="col-md-12">
+            <StageArtifactSelectorDelegate
               artifact={this.state.taskDefArtifact.artifact}
-              onExpectedArtifactSelected={this.onExpectedArtifactSelected}
-              onArtifactEdited={this.onArtifactEdited}
               excludedArtifactTypePatterns={this.excludedArtifactTypePatterns}
+              expectedArtifactId={this.state.taskDefArtifact.artifactId}
+              label="Artifact"
+              helpKey="ecs.taskDefinition"
+              onExpectedArtifactSelected={(artifact: IExpectedArtifact) => this.onExpectedArtifactSelected(artifact.id)}
+              onArtifactEdited={this.onArtifactEdited}
+              pipeline={command.viewState.pipeline}
+              selectedArtifactId={this.state.taskDefArtifact.artifactId}
+              selectedArtifactAccount={this.state.taskDefArtifactAccount}
+              setArtifactAccount={this.setArtifactAccount}
+              setArtifactId={this.onExpectedArtifactSelected}
+              stage={command.viewState.currentStage}
+              updatePipeline={this.updatePipeline}
             />
           </div>
         </div>
@@ -210,7 +230,6 @@ export class TaskDefinition extends React.Component<ITaskDefinitionProps, ITaskD
           <div className="col-md-9">
             <select
               className="form-control input-sm"
-              required
               value={this.state.loadBalancedContainer}
               onChange={e => this.updateLoadBalancedContainer(e.target.value)}
             >

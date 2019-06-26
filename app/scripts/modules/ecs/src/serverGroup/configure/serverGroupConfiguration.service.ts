@@ -114,6 +114,7 @@ export interface IEcsServerGroupCommand extends IServerGroupCommand {
   imageDescription: IEcsDockerImage;
   viewState: IEcsServerGroupCommandViewState;
   taskDefinitionArtifact: IEcsTaskDefinitionArtifact;
+  taskDefinitionArtifactAccount: string;
   containerMappings: IEcsContainerMapping[];
   loadBalancedContainer: string;
 

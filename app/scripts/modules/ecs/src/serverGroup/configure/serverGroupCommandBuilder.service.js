@@ -225,10 +225,8 @@ module.exports = angular
         let contextImages = findUpstreamImages(current, pipeline.stages) || [];
         contextImages = contextImages.concat(findTriggerImages(pipeline.triggers));
 
-        // TODO: figure out why context images not set after this
         return $q.when({
           viewState: {
-            // prompt for template selection on new server groups
             requiresTemplateSelection: true,
             // applies viewState overrides after template selection
             overrides: {
@@ -302,6 +300,7 @@ module.exports = angular
               .filter(name => !enabledProcesses.includes(name)),
             targetGroup: serverGroup.targetGroup,
             taskDefinitionArtifact: {},
+            taskDefinitionArtifactAccount: '',
             useTaskDefinitionArtifact: false,
             containerMappings: [],
             loadBalancedContainer: '',
