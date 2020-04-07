@@ -95,6 +95,9 @@ export class EcsTargetGroupDetails extends React.Component<IEcsTargetGroupProps>
               </dd>
             </dl>
           </CollapsibleSection>
+          <CollapsibleSection heading="Status" defaultExpanded={false}></CollapsibleSection>
+          <CollapsibleSection heading="Health Checks" defaultExpanded={false}></CollapsibleSection>
+          <CollapsibleSection heading="Attributes" defaultExpanded={false}></CollapsibleSection>
         </div>
       </div>
     );
