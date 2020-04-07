@@ -37,7 +37,7 @@ export class EcsLoadBalancerDetails extends React.Component<
       loadBalancer: undefined,
       refreshListenerUnsubscribe: () => {},
     };
-    console.log('EcsLoadBalancerDetails PROPS:'); // eslint-disable-line
+    console.log('LOAD BALANCER Details PROPS:'); // eslint-disable-line
     console.log(props); // eslint-disable-line
 
     // extract LB
@@ -45,17 +45,18 @@ export class EcsLoadBalancerDetails extends React.Component<
       .getDataSource('loadBalancers')
       .ready()
       .then(() => this.extractLoadBalancer());
+  }
 
-    // TODO retireve load balancer details with [app.getDataSource('loadBalancers')]
-    // ...see LoadBalancers.tsx  |  how does cloudfoundry do it?
+  public componentWillUnmount(): void {
+    this.state.refreshListenerUnsubscribe();
   }
 
   private extractLoadBalancer(): void {
-    const { name } = this.props.loadBalancer;
+    const { name, region } = this.props.loadBalancer;
     const loadBalancer: IEcsLoadBalancer = this.props.app
       .getDataSource('loadBalancers')
       .data.find((test: IEcsLoadBalancer) => {
-        return test.name === name && test.account === this.props.loadBalancer.accountId;
+        return test.name === name && test.account === this.props.loadBalancer.accountId && test.region === region;
       });
 
     this.setState({
@@ -74,10 +75,9 @@ export class EcsLoadBalancerDetails extends React.Component<
       this.setState({
         refreshListenerUnsubscribe: () => {},
       });
-      // this.autoClose();
     }
 
-    console.log('EcsLoadBalancerDetails retrieved LB:'); // eslint-disable-line
+    console.log('LOAD BALANCER Details retrieved LB:'); // eslint-disable-line
     console.log(loadBalancer); // eslint-disable-line
   }
 

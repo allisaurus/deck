@@ -37,11 +37,9 @@ module(ECS_TARGET_GROUP_STATES, [APPLICATION_STATE_PROVIDER]).config([
             return {
               loadBalancerName: $stateParams.loadBalancerName,
               targetGroupName: $stateParams.name,
-              accountId: $stateParams.accountId,
+              //accountId: $stateParams.accountId,
               region: $stateParams.region,
               vpcId: $stateParams.vpcId,
-              //port: $stateParams.port,
-              protocol: $stateParams.protocol,
             };
           },
         ],

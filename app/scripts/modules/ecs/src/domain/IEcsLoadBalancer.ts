@@ -24,13 +24,14 @@ export interface IEcsTargetGroup {
   healthCheckProtocol: string;
   healthCheckPort: number | 'traffic-port';
   healthCheckPath: string;
-  healthTimeout: number;
-  healthInterval: number;
-  healthyThreshold: number;
-  unhealthyThreshold: number;
+  healthCheckTimeoutSeconds: number;
+  healthCheckIntervalSeconds: number;
+  healthyThresholdCount: number;
+  unhealthyThresholdCount: number;
   instanceCounts?: IInstanceCounts;
   instances?: IInstance[];
   loadBalancerNames: string[]; // returned from clouddriver
+  matcher: any;
   targetGroupName: string; // TODO ALLIE change to 'name'?
   port: number;
   protocol: string;
