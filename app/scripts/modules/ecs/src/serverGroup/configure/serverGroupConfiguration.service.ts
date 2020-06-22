@@ -109,6 +109,7 @@ export interface IEcsTargetGroupMapping {
 }
 
 export interface IEcsServiceDiscoveryRegistryAssociation {
+  containerName?: string;
   registry: IServiceDiscoveryRegistryDescriptor;
   containerPort: number;
 }
@@ -126,6 +127,7 @@ export interface IEcsServerGroupCommand extends IServerGroupCommand {
   viewState: IEcsServerGroupCommandViewState;
   taskDefinitionArtifact: IEcsTaskDefinitionArtifact;
   taskDefinitionArtifactAccount: string;
+  useTaskDefinitionArtifact: boolean;
   containerMappings: IEcsContainerMapping[];
   loadBalancedContainer: string;
   targetGroupMappings: IEcsTargetGroupMapping[];

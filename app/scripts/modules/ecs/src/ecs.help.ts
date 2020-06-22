@@ -71,6 +71,8 @@ const helpContents: { [key: string]: string } = {
   'ecs.serviceDiscoveryRegistry': '<p>The AWS Cloud Map service to use for service discovery registration</p>',
   'ecs.serviceDiscoveryContainerPort':
     '<p>The port to be used for your service discovery service. Required only for services using bridge or host network mode, and for services using awsvpc network mode and a type SRV DNS record',
+  'ecs.serviceDiscoveryContainerName':
+    '<p>The container name value, already specified in the task definition, to be used for your service discovery service. If the task definition that your service task specifies uses the bridge or host network mode, you must specify a containerName and containerPort combination from the task definition.</p>',
 };
 
 Object.keys(helpContents).forEach(key => HelpContentsRegistry.register(key, helpContents[key]));

@@ -27,17 +27,20 @@ export interface IEcsServiceDiscoveryRegistry {
 interface IServiceDiscoveryState {
   serviceDiscoveryAssociations: IEcsServiceDiscoveryRegistryAssociation[];
   serviceDiscoveryRegistriesAvailable: IEcsServiceDiscoveryRegistry[];
+  //usingArtifact: boolean;
 }
 
 export class ServiceDiscovery extends React.Component<IServiceDiscoveryProps, IServiceDiscoveryState> {
   constructor(props: IServiceDiscoveryProps) {
     super(props);
     const cmd = this.props.command;
+    //const isUsingArtifact = cmd.useTaskDefinitionArtifact;
 
     this.state = {
       serviceDiscoveryAssociations: cmd.serviceDiscoveryAssociations,
       serviceDiscoveryRegistriesAvailable:
         cmd.backingData && cmd.backingData.filtered ? cmd.backingData.filtered.serviceDiscoveryRegistries : [],
+      //usingArtifact: isUsingArtifact,
     };
   }
 
@@ -45,6 +48,7 @@ export class ServiceDiscovery extends React.Component<IServiceDiscoveryProps, IS
     this.props.configureCommand('1').then(() => {
       this.setState({
         serviceDiscoveryRegistriesAvailable: this.props.command.backingData.filtered.serviceDiscoveryRegistries,
+        //usingArtifact: this.props.command.useTaskDefinitionArtifact,
       });
     });
   }
@@ -84,6 +88,14 @@ export class ServiceDiscovery extends React.Component<IServiceDiscoveryProps, IS
     this.setState({ serviceDiscoveryAssociations: currentAssociations });
   };
 
+  private updateServiceDiscoveryContainerName = (index: number, newName: string) => {
+    const currentAssociations = this.state.serviceDiscoveryAssociations;
+    const targetAssociations = currentAssociations[index];
+    targetAssociations.containerName = newName;
+    this.props.notifyAngular('serviceDiscoveryAssociations', currentAssociations);
+    this.setState({ serviceDiscoveryAssociations: currentAssociations });
+  };
+
   private updateServiceDiscoveryPort = (index: number, targetPort: number) => {
     const currentAssociations = this.state.serviceDiscoveryAssociations;
     const targetAssociations = currentAssociations[index];
@@ -109,14 +121,45 @@ export class ServiceDiscovery extends React.Component<IServiceDiscoveryProps, IS
     const removeServiceDiscoveryAssociation = this.removeServiceDiscoveryAssociations;
     const updateServiceDiscoveryRegistry = this.updateServiceDiscoveryRegistry;
     const updateServiceDiscoveryPort = this.updateServiceDiscoveryPort;
+    const updateServiceDiscoveryContainerName = this.updateServiceDiscoveryContainerName;
+    const usingArtifact = this.props.command.useTaskDefinitionArtifact;
 
     const registriesAvailable = this.state.serviceDiscoveryRegistriesAvailable.map(function(registry) {
       return { label: `${registry.displayName}`, value: registry.displayName };
     });
 
+    const containerNameInput = (index: number, name: string) => (
+      <td>
+        <input
+          className="form-control input-sm"
+          required={false}
+          placeholder="For SRV registries, enter a container name..."
+          value={name}
+          onChange={e => updateServiceDiscoveryContainerName(index, e.target.value)}
+        />
+      </td>
+    );
+
+    const containerNameInputHeader = () => (
+      <th style={{ width: '30%' }}>
+        Container name
+        <HelpField id="ecs.serviceDiscoveryContainerName" />
+      </th>
+    );
+
     const serviceDiscoveryInputs = this.state.serviceDiscoveryAssociations.map(function(mapping, index) {
       return (
         <tr key={index}>
+          {usingArtifact ? containerNameInput(index, mapping.containerName) : null}
+          {/* <td>
+            <input
+              className="form-control input-sm"
+              required={false}
+              placeholder="For SRV registries, enter a container name..."
+              value={mapping.containerName}
+              onChange={e => updateServiceDiscoveryContainerName(index, e.target.value)}
+            />
+          </td> */}
           <td>
             <TetheredSelect
               placeholder="Select a registry..."
@@ -169,12 +212,14 @@ export class ServiceDiscovery extends React.Component<IServiceDiscoveryProps, IS
           <form name="ecsServiceDiscoveryRegistryMappings">
             <table className="table table-condensed packed tags">
               <thead>
+                {usingArtifact}
                 <tr>
-                  <th style={{ width: '75%' }}>
+                  {usingArtifact ? containerNameInputHeader() : null}
+                  <th style={{ width: '55%' }}>
                     Registry
                     <HelpField id="ecs.serviceDiscoveryRegistry" />
                   </th>
-                  <th style={{ width: '18%' }}>
+                  <th style={{ width: '15%' }}>
                     Port
                     <HelpField id="ecs.serviceDiscoveryContainerPort" />
                   </th>
